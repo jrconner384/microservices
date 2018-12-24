@@ -22,6 +22,8 @@ namespace crypto.sha256
             log.LogInformation("Calculating HMAC with SHA-256.");
             var payload = req.Headers["payload"];
             var payloadBytes = Encoding.ASCII.GetBytes(payload);
+            // The method currently expects the key to be passed in the HTTP request. This is obviously not secure.
+            // This should be changed to use AKV or some other secure system.
             var key = Encoding.ASCII.GetBytes(req.Headers["key"]);
             string digestValue;
 
