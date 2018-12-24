@@ -25,14 +25,14 @@ namespace crypto.sha256
             // The method currently expects the key to be passed in the HTTP request. This is obviously not secure.
             // This should be changed to use AKV or some other secure system.
             var key = Encoding.ASCII.GetBytes(req.Headers["key"]);
-            string digestValue;
+            string hashHex;
 
             // Compute the hash, convert it to a hex string, remove the hyphens separating the values, and convert to lower case.
             using (var hmac = new HMACSHA256(key)) {
-                digestValue = BitConverter.ToString(hmac.ComputeHash(payloadBytes)).Replace("-", "").ToLower();
+                hashHex = BitConverter.ToString(hmac.ComputeHash(payloadBytes)).Replace("-", "").ToLower();
             }
 
-            return (ActionResult)new OkObjectResult($"{payload}.{digestValue}");
+            return (ActionResult)new OkObjectResult(hashHex);
         }
     }
 }
