@@ -22,6 +22,7 @@ namespace crypto.sha256
             log.LogInformation($"Current Unix timestamp: {unixNow}");
             var publicKey = req.Headers["publicKey"];
             var payload = $"{unixNow}.{publicKey}";
+            log.LogInformation($"Plain-text payload: {payload}");
             var payloadBytes = Encoding.ASCII.GetBytes(payload);
             // The method currently expects the key to be passed in the HTTP request. This is obviously not secure.
             // This should be changed to use AKV or some other secure system.
@@ -33,6 +34,7 @@ namespace crypto.sha256
                 hashHex = BitConverter.ToString(hmac.ComputeHash(payloadBytes)).Replace("-", "").ToLower();
             }
 
+            log.LogInformation($"Hashed payload: {hashHex}");
             return (ActionResult)new OkObjectResult(hashHex);
         }
     }
