@@ -18,15 +18,18 @@ namespace crypto.sha256
             ILogger log)
         {
             log.LogInformation("Calculating HMAC with SHA-256.");
-            var payload = req.Headers["payload"];
+            var unixNow = (int)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+            log.LogInformation($"Current Unix timestamp: {unixNow}");
+            var publicKey = req.Headers["publicKey"];
+            var payload = $"{unixNow}.{publicKey}";
             var payloadBytes = Encoding.ASCII.GetBytes(payload);
             // The method currently expects the key to be passed in the HTTP request. This is obviously not secure.
             // This should be changed to use AKV or some other secure system.
-            var key = Encoding.ASCII.GetBytes(req.Headers["key"]);
+            var privateKey = Encoding.ASCII.GetBytes(req.Headers["privateKey"]);
             string hashHex;
 
             // Compute the hash, convert it to a hex string, remove the hyphens separating the values, and convert to lower case.
-            using (var hmac = new HMACSHA256(key)) {
+            using (var hmac = new HMACSHA256(privateKey)) {
                 hashHex = BitConverter.ToString(hmac.ComputeHash(payloadBytes)).Replace("-", "").ToLower();
             }
 
